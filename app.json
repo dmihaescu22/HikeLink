@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "HikeLink",
+    "slug": "HikeLink",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#4B5E43", 
+      "resizeMode": "contain" 
+    },
+    "platforms": ["ios", "android", "web"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#4B5E43"
+      }
+    }
+  }
+}
