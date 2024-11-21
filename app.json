@@ -1,22 +1,28 @@
 {
   "expo": {
-    "name": "HikeLink",
-    "slug": "HikeLink",
+    "name": "licenta",
+    "slug": "licenta",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "backgroundColor": "#4B5E43", 
-      "resizeMode": "contain" 
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
-    "platforms": ["ios", "android", "web"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#4B5E43"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     }
   }
 }
