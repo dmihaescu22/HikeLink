@@ -46,12 +46,14 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Enter Your Username"
+          placeholderTextColor="#999" // Culoare placeholder adăugată
           value={username}
           onChangeText={setUsername}
         />
         <TextInput
           style={styles.input}
           placeholder="Enter Your Email"
+          placeholderTextColor="#999" // Culoare placeholder adăugată
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -59,6 +61,7 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Enter Your Password"
+          placeholderTextColor="#999" // Culoare placeholder adăugată
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -66,6 +69,7 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Enter Your Phone Number"
+          placeholderTextColor="#999" // Culoare placeholder adăugată
           value={phone}
           onChangeText={setPhone}
           keyboardType="phone-pad"

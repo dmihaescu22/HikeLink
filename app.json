@@ -4,7 +4,29 @@
     "slug": "hike-link-app",
     "version": "1.0.0",
     "android": {
-      "package": "com.hikelinkapp"
-    }
+      "package": "com.hikelinkapp",
+      "newArchEnabled": false
+    },
+    "ios": {
+      "config": {
+        "googleMapsApiKey": "AIzaSyCVwpLAu2b7mIwHnkWbTSYhZxEpBa0tO18"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to show nearby hiking trails."
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33,
+            "minSdkVersion": 21,
+            "buildToolsVersion": "33.0.0"
+          }
+        }
+      ]
+    ]
   }
 }

@@ -43,7 +43,7 @@ export default function LoginScreen({ navigation }) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert('Succes!', 'Te-ai autentificat cu succes!');
-      navigation.navigate('ExploreScreen'); // Navigare la pagina Explore
+      navigation.navigate('Explore'); // Navigare la pagina ExploreScreen
     } catch (error) {
       Alert.alert('Eroare', error.message); // Afișează eroarea
     }
