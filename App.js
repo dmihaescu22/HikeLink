@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import * as Location from 'expo-location';
+import { View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './navigation/AppNavigator';
+import * as Location from 'expo-location';
 
 export default function App() {
   useEffect(() => {
@@ -17,7 +18,9 @@ export default function App() {
 
   return (
     <View style={{ flex: 1 }}>
-      <AppNavigator />
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
     </View>
   );
 }
