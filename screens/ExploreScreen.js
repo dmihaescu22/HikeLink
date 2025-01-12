@@ -12,6 +12,7 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { StatusBar } from 'expo-status-bar';
 import Svg, { Polyline as SvgPolyline } from 'react-native-svg';
+import { useRef } from 'react';
 
 
 export default function ExploreScreen() {
@@ -24,36 +25,48 @@ export default function ExploreScreen() {
   const windowHeight = Dimensions.get('window').height;
   const [selectedTrail, setSelectedTrail] = useState(null);
   const [routeCoords, setRouteCoords] = useState([]);
+  const [elapsedTime, setElapsedTime] = useState(0); // Timpul scurs în secunde
+  const timer = useRef(null); // Inițializare timer ca referință
+
 
   const handleTrailSelection = (trail) => {
-    //console.log('Selected trail:', trail);
-    setSelectedTrail(trail);
-    if (trail.geometry && trail.geometry.location) {
+    if (trail && trail.geometry && trail.geometry.location) {
+      console.log('Selected trail:', trail);
+      setSelectedTrail(trail);
       getDirections(trail.geometry.location);
     } else {
-      //console.error('Trail location data is missing or invalid:', trail);
+      console.error('Invalid trail data:', trail);
     }
   };
+  
 
   const convertToSvgPoints = (coords, region, width, height) => {
-    return coords.map((point) => {
-      const x = ((point.longitude - region.longitude) / region.longitudeDelta) * width;
-      const y = ((region.latitude - point.latitude) / region.latitudeDelta) * height;
-      return `${x},${y}`;
-    }).join(' ');
+    if (!Array.isArray(coords) || coords.length < 2) {
+      console.error('Not enough points to draw a route');
+      return '';
+    }
+  
+    return coords
+      .map((point) => {
+        const x = ((point.longitude - region.longitude) / region.longitudeDelta) * width;
+        const y = ((region.latitude - point.latitude) / region.latitudeDelta) * height;
+        return `${x},${y}`;
+      })
+      .join(' ');
   };
+  
   
 
   useEffect(() => {
     let locationSubscription;
-
+  
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
+  
       locationSubscription = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
@@ -72,13 +85,16 @@ export default function ExploreScreen() {
         }
       );
     })();
-
+  
     return () => {
       if (locationSubscription) {
         locationSubscription.remove();
       }
+      clearInterval(timer.current); // Oprim cronometru la demontare
     };
   }, []);
+  
+  
 
   const fetchTrails = async (latitude, longitude) => {
     const radius = 10000;
@@ -99,37 +115,53 @@ export default function ExploreScreen() {
       console.error('Error fetching hiking trails:', error);
     }
   };
-  
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   const getDirections = async (destination) => {
-    if (!location) return;
+    if (!location) {
+      console.error('Location is not available');
+      return;
+    }
+  
     if (!destination || !destination.lat || !destination.lng) {
       console.error('Invalid destination:', destination);
       return;
     }
-
+  
     const origin = `${location.coords.latitude},${location.coords.longitude}`;
-    const dest = `${destination.lat},${destination.lng}`;
-
+    const dest = `${destination.lat},${destination.lng}`;    
+  
     try {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&mode=walking&key=${apiKey}`
       );
       const data = await response.json();
-
+  
       if (data.routes && data.routes.length > 0) {
         const points = data.routes[0].overview_polyline.points;
         const decodedPoints = decodePolyline(points);
-        //console.log('Decoded route coordinates:', decodedPoints);
+  
+        if (decodedPoints.length < 2) {
+          console.error('Not enough points in decoded route');
+          return;
+        }
+  
         setRouteCoords(decodedPoints);
+        console.log('Route coordinates set:', decodedPoints);
       } else {
-        //console.log('No routes found');
-        setRouteCoords([]);
+        console.log('No routes found');
+        setRouteCoords([]); // Resetăm coordonatele în caz de eroare
       }
     } catch (error) {
       console.error('Error fetching directions:', error);
     }
   };
+  
 
   const decodePolyline = (t) => {
     let points = [];
@@ -164,8 +196,22 @@ export default function ExploreScreen() {
   };
 
   const toggleTracking = () => {
+    if (isTracking) {
+      // Oprim cronometru și resetăm timpul
+      clearInterval(timer.current);
+      timer.current = null;
+      setElapsedTime(0); // Resetăm timpul la 0
+    } else {
+      // Pornim cronometru
+      timer.current = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 1);
+      }, 1000);
+    }
     setIsTracking(!isTracking);
   };
+  
+  
+  
 
   return (
     <View style={styles.container}>
@@ -177,9 +223,9 @@ export default function ExploreScreen() {
           <Text style={styles.statValue}>--</Text>
           <Text style={styles.unitLabel}>km/h</Text>
         </View>
-        <View style={styles.statCenter}>
+          <View style={styles.statCenter}>
           <Text style={styles.statLabel}>Time</Text>
-          <Text style={styles.statValue}>00:00</Text>
+          <Text style={styles.statValue}>{formatTime(elapsedTime)}</Text>
         </View>
         <View style={styles.stat}>
           <Text style={styles.statLabel}>Distance</Text>
@@ -209,8 +255,10 @@ export default function ExploreScreen() {
         zoomEnabled={true}
         onRegionChangeComplete={(reg) => setRegion(reg)}
         onPress={() => {
-          setSelectedTrail(null);
-          setRouteCoords([]);
+          if (routeCoords.length > 0) {
+            setSelectedTrail(null);
+            setRouteCoords([]);
+          }
         }}
       >
         {/* Markere pentru trasee */}
@@ -226,7 +274,7 @@ export default function ExploreScreen() {
         ))}
       
         {/* Afișarea traseului folosind SVG */}
-        {Array.isArray(routeCoords) && routeCoords.length > 0 && region && (
+        {Array.isArray(routeCoords) && routeCoords.length > 1 && region && (
           <Svg
             style={{
               position: 'absolute',
