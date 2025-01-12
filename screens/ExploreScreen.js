@@ -27,6 +27,10 @@ export default function ExploreScreen() {
   const [routeCoords, setRouteCoords] = useState([]);
   const [elapsedTime, setElapsedTime] = useState(0); // Timpul scurs în secunde
   const timer = useRef(null); // Inițializare timer ca referință
+  const [speed, setSpeed] = useState(0); // Viteza în timp real
+  const [distance, setDistance] = useState(0); // Distanța parcursă în km
+  const previousLocation = useRef(null); // Păstrăm ultima locație pentru calcularea distanței
+
 
 
   const handleTrailSelection = (trail) => {
@@ -81,8 +85,24 @@ export default function ExploreScreen() {
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           });
+        
+          // Actualizare viteza în timp real
+          setSpeed((loc.coords.speed * 3.6).toFixed(2)); // Conversie din m/s în km/h
+        
+          // Calculare distanță parcursă
+          if (previousLocation.current) {
+            const newDistance = getDistanceFromLatLonInKm(
+              previousLocation.current.latitude,
+              previousLocation.current.longitude,
+              loc.coords.latitude,
+              loc.coords.longitude
+            );
+            setDistance((prevDistance) => prevDistance + newDistance);
+          }
+          previousLocation.current = loc.coords; // Actualizăm ultima locație
+        
           fetchTrails(loc.coords.latitude, loc.coords.longitude);
-        }
+        }        
       );
     })();
   
@@ -195,12 +215,33 @@ export default function ExploreScreen() {
     return points;
   };
 
+  const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Raza Pământului în km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distanța în km
+    return distance;
+  };
+  
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
+  
+
   const toggleTracking = () => {
     if (isTracking) {
-      // Oprim cronometru și resetăm timpul
+      // Oprim cronometru și resetăm valorile
       clearInterval(timer.current);
       timer.current = null;
-      setElapsedTime(0); // Resetăm timpul la 0
+      setElapsedTime(0);
+      setSpeed(0); // Resetăm viteza
+      setDistance(0); // Resetăm distanța
+      previousLocation.current = null; // Resetăm ultima locație
     } else {
       // Pornim cronometru
       timer.current = setInterval(() => {
@@ -212,6 +253,7 @@ export default function ExploreScreen() {
   
   
   
+  
 
   return (
     <View style={styles.container}>
@@ -220,7 +262,7 @@ export default function ExploreScreen() {
       <View style={styles.statsContainer}>
         <View style={styles.stat}>
           <Text style={styles.statLabel}>Speed</Text>
-          <Text style={styles.statValue}>--</Text>
+          <Text style={styles.statValue}>{speed}</Text>
           <Text style={styles.unitLabel}>km/h</Text>
         </View>
           <View style={styles.statCenter}>
@@ -229,7 +271,7 @@ export default function ExploreScreen() {
         </View>
         <View style={styles.stat}>
           <Text style={styles.statLabel}>Distance</Text>
-          <Text style={styles.statValue}>--</Text>
+          <Text style={styles.statValue}>{distance.toFixed(2)}</Text>
           <Text style={styles.unitLabel}>km</Text>
         </View>
       </View>
