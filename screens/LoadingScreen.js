@@ -6,13 +6,14 @@ import { auth } from '../config/firebase'; // Import instanța Firebase
 
 export default function LoadingScreen({ navigation }) {
   useEffect(() => {
+    // Verifică starea autentificării utilizatorului
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Dacă utilizatorul este autentificat, redirecționează către MainNavigator (Explore este în MainNavigator)
-        navigation.navigate('Main');
+        console.log('User logged in:', user);
+        navigation.replace('Main'); // Redirecționează către MainNavigator dacă utilizatorul este logat
       } else {
-        // Dacă utilizatorul nu este autentificat, redirecționează către AuthNavigator (Login este în AuthNavigator)
-        navigation.navigate('Auth');
+        console.log('No user logged in');
+        navigation.replace('Auth'); // Redirecționează către AuthNavigator dacă utilizatorul nu este logat
       }
     });
 
@@ -21,7 +22,6 @@ export default function LoadingScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Afișează doar logo-ul */}
       <Image source={logo} style={styles.logo} />
     </View>
   );
@@ -30,13 +30,13 @@ export default function LoadingScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center', // Centrare pe axa verticală
-    alignItems: 'center', // Centrare pe axa orizontală
-    backgroundColor: '#556B2F', // Fundal verde
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#556B2F',
   },
   logo: {
-    width: 500, // Dimensiunea logo-ului
+    width: 500,
     height: 500,
-    resizeMode: 'contain', // Păstrează proporțiile imaginii
+    resizeMode: 'contain',
   },
 });

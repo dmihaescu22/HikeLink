@@ -13,9 +13,12 @@ import * as Location from 'expo-location';
 import { StatusBar } from 'expo-status-bar';
 import Svg, { Polyline as SvgPolyline } from 'react-native-svg';
 import { useRef } from 'react';
+import { auth } from '../config/firebase';
+import { Button } from 'react-native';
 
 
-export default function ExploreScreen() {
+
+export default function ExploreScreen({ navigation}) {
   const [location, setLocation] = useState(null);
   const apiKey = 'AIzaSyCVwpLAu2b7mIwHnkWbTSYhZxEpBa0tO18';
   const [errorMsg, setErrorMsg] = useState(null);
@@ -32,6 +35,20 @@ export default function ExploreScreen() {
   const previousLocation = useRef(null); // Păstrăm ultima locație pentru calcularea distanței
 
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Auth' }],
+      });
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+  
+  
+  
 
   const handleTrailSelection = (trail) => {
     if (trail && trail.geometry && trail.geometry.location) {
@@ -396,11 +413,11 @@ const styles = StyleSheet.create({
   },
   startNavigationButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 5,
     left: '43%',
     transform: [{ translateX: -50 }],
     backgroundColor: '#556B2F',
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 20,
     borderRadius: 20,
   },

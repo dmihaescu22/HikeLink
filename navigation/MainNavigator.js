@@ -2,8 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ExploreScreen from '../screens/ExploreScreen';
 import { Image } from 'react-native';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
-// Importăm PNG-urile pentru tab-uri
 import feedIcon from '../assets/icons/feed.png';
 import activityIcon from '../assets/icons/activity.png';
 import exploreIcon from '../assets/icons/explore.png';
@@ -12,11 +13,19 @@ import profileIcon from '../assets/icons/profile.png';
 
 const Tab = createBottomTabNavigator();
 
-export default function MainNavigator() {
+export default function MainNavigator({ navigation }) {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigation.replace('Auth'); // Redirecționează către AuthNavigator după delogare
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false, // Ascunde header-ul din toate paginile tab-ului
         tabBarIcon: ({ focused }) => {
           let iconSource;
           switch (route.name) {
@@ -38,7 +47,6 @@ export default function MainNavigator() {
             default:
               iconSource = exploreIcon;
           }
-
           return (
             <Image
               source={iconSource}
@@ -46,16 +54,24 @@ export default function MainNavigator() {
             />
           );
         },
-        tabBarShowLabel: true,
-        tabBarActiveTintColor: '#556B2F',
-        tabBarInactiveTintColor: '#888',
+        tabBarStyle: { height: 60 },
+        headerShown: false,
       })}
     >
-      <Tab.Screen name="Explore" component={ExploreScreen} />
       <Tab.Screen name="Feed" component={ExploreScreen} />
       <Tab.Screen name="Activity" component={ExploreScreen} />
+      <Tab.Screen name="Explore" component={ExploreScreen} />
       <Tab.Screen name="Badges" component={ExploreScreen} />
-      <Tab.Screen name="Profile" component={ExploreScreen} />
+      <Tab.Screen
+        name="Profile"
+        component={ExploreScreen} // Păstrăm componenta ExploreScreen
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault(); // Previne navigarea la ecranul Profile
+            handleLogout(); // Apelează funcția de logout
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 }
