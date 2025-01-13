@@ -26,7 +26,7 @@ export default function RegisterScreen({ navigation }) {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       Alert.alert('Succes', 'Cont creat cu succes!');
-      navigation.navigate('Login'); // Navighează înapoi la pagina de Login
+      navigation.navigate('Login'); 
     } catch (error) {
       Alert.alert('Eroare', error.message);
     }
@@ -46,14 +46,14 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Enter Your Username"
-          placeholderTextColor="#999" // Culoare placeholder adăugată
+          placeholderTextColor="#999" 
           value={username}
           onChangeText={setUsername}
         />
         <TextInput
           style={styles.input}
           placeholder="Enter Your Email"
-          placeholderTextColor="#999" // Culoare placeholder adăugată
+          placeholderTextColor="#999" 
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -61,7 +61,7 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Enter Your Password"
-          placeholderTextColor="#999" // Culoare placeholder adăugată
+          placeholderTextColor="#999" 
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -69,7 +69,7 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Enter Your Phone Number"
-          placeholderTextColor="#999" // Culoare placeholder adăugată
+          placeholderTextColor="#999" 
           value={phone}
           onChangeText={setPhone}
           keyboardType="phone-pad"
@@ -108,13 +108,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 5, // Spațiu între titlu și subtitlu
+    marginBottom: 5, 
     marginTop: 50,
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 50, // Spațiu între subtitlu și câmpuri
+    marginBottom: 50, 
   },
   input: {
     width: '90%',
@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '90%',
     marginTop: 10,
-    // Umbra butonului
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -146,7 +145,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginLink: {
-    marginTop: 280, // Distanță față de butonul de înregistrare
+    marginTop: 280, 
     fontSize: 14,
     color: '#333',
   },

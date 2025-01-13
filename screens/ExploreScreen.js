@@ -28,11 +28,11 @@ export default function ExploreScreen({ navigation}) {
   const windowHeight = Dimensions.get('window').height;
   const [selectedTrail, setSelectedTrail] = useState(null);
   const [routeCoords, setRouteCoords] = useState([]);
-  const [elapsedTime, setElapsedTime] = useState(0); // Timpul scurs în secunde
-  const timer = useRef(null); // Inițializare timer ca referință
-  const [speed, setSpeed] = useState(0); // Viteza în timp real
-  const [distance, setDistance] = useState(0); // Distanța parcursă în km
-  const previousLocation = useRef(null); // Păstrăm ultima locație pentru calcularea distanței
+  const [elapsedTime, setElapsedTime] = useState(0); 
+  const timer = useRef(null); 
+  const [speed, setSpeed] = useState(0); 
+  const [distance, setDistance] = useState(0);
+  const previousLocation = useRef(null); 
 
 
   const handleLogout = async () => {
@@ -102,11 +102,9 @@ export default function ExploreScreen({ navigation}) {
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           });
+      
+          setSpeed((loc.coords.speed * 3.6).toFixed(2)); 
         
-          // Actualizare viteza în timp real
-          setSpeed((loc.coords.speed * 3.6).toFixed(2)); // Conversie din m/s în km/h
-        
-          // Calculare distanță parcursă
           if (previousLocation.current) {
             const newDistance = getDistanceFromLatLonInKm(
               previousLocation.current.latitude,
@@ -116,7 +114,7 @@ export default function ExploreScreen({ navigation}) {
             );
             setDistance((prevDistance) => prevDistance + newDistance);
           }
-          previousLocation.current = loc.coords; // Actualizăm ultima locație
+          previousLocation.current = loc.coords; 
         
           fetchTrails(loc.coords.latitude, loc.coords.longitude);
         }        
@@ -127,7 +125,7 @@ export default function ExploreScreen({ navigation}) {
       if (locationSubscription) {
         locationSubscription.remove();
       }
-      clearInterval(timer.current); // Oprim cronometru la demontare
+      clearInterval(timer.current); 
     };
   }, []);
   
@@ -141,7 +139,7 @@ export default function ExploreScreen({ navigation}) {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      //console.log('API Response:', data); // Adaugă acest log
+      //console.log('API Response:', data);
   
       if (data.results) {
         setTrails(data.results);
@@ -192,7 +190,7 @@ export default function ExploreScreen({ navigation}) {
         console.log('Route coordinates set:', decodedPoints);
       } else {
         console.log('No routes found');
-        setRouteCoords([]); // Resetăm coordonatele în caz de eroare
+        setRouteCoords([]); 
       }
     } catch (error) {
       console.error('Error fetching directions:', error);
@@ -233,7 +231,7 @@ export default function ExploreScreen({ navigation}) {
   };
 
   const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Raza Pământului în km
+    const R = 6371; 
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
@@ -241,7 +239,7 @@ export default function ExploreScreen({ navigation}) {
       Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distanța în km
+    const distance = R * c; 
     return distance;
   };
   
@@ -252,15 +250,13 @@ export default function ExploreScreen({ navigation}) {
 
   const toggleTracking = () => {
     if (isTracking) {
-      // Oprim cronometru și resetăm valorile
       clearInterval(timer.current);
       timer.current = null;
       setElapsedTime(0);
-      setSpeed(0); // Resetăm viteza
-      setDistance(0); // Resetăm distanța
-      previousLocation.current = null; // Resetăm ultima locație
+      setSpeed(0); 
+      setDistance(0); 
+      previousLocation.current = null; 
     } else {
-      // Pornim cronometru
       timer.current = setInterval(() => {
         setElapsedTime((prevTime) => prevTime + 1);
       }, 1000);

@@ -1,23 +1,26 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import logo from '../assets/images/logo.png';
-import { onAuthStateChanged } from 'firebase/auth'; // Import pentru verificarea autentificării
-import { auth } from '../config/firebase'; // Import instanța Firebase
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 export default function LoadingScreen({ navigation }) {
   useEffect(() => {
-    // Verifică starea autentificării utilizatorului
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log('User logged in:', user);
-        navigation.replace('Main'); // Redirecționează către MainNavigator dacă utilizatorul este logat
-      } else {
-        console.log('No user logged in');
-        navigation.replace('Auth'); // Redirecționează către AuthNavigator dacă utilizatorul nu este logat
-      }
-    });
+    const timer = setTimeout(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log('User logged in:', user);
+          navigation.replace('Main'); 
+        } else {
+          console.log('No user logged in');
+          navigation.replace('Auth');
+        }
+      });
 
-    return () => unsubscribe(); // Dezabonare de la evenimentul de autentificare
+      return () => unsubscribe();
+    }, 2000); // Așteaptă 2 secunde înainte de a verifica autentificarea
+
+    return () => clearTimeout(timer); // Curăță timer-ul la demontare
   }, []);
 
   return (

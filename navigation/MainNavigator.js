@@ -17,7 +17,7 @@ export default function MainNavigator({ navigation }) {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigation.replace('Auth'); // Redirecționează către AuthNavigator după delogare
+      navigation.replace('Auth'); 
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -64,11 +64,11 @@ export default function MainNavigator({ navigation }) {
       <Tab.Screen name="Badges" component={ExploreScreen} />
       <Tab.Screen
         name="Profile"
-        component={ExploreScreen} // Păstrăm componenta ExploreScreen
+        component={ExploreScreen}
         listeners={{
           tabPress: (e) => {
-            e.preventDefault(); // Previne navigarea la ecranul Profile
-            handleLogout(); // Apelează funcția de logout
+            e.preventDefault(); 
+            handleLogout(); 
           },
         }}
       />

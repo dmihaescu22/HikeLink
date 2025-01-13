@@ -10,9 +10,8 @@ import {
   Alert,
 } from 'react-native';
 
-// Importă funcțiile necesare din Firebase
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../config/firebase'; // Asigură-te că această cale este corectă
+import { auth } from '../config/firebase'; 
 
 const CustomCheckBox = ({ value, onValueChange }) => {
   return (
@@ -33,7 +32,6 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
-  // Funcție pentru autentificare
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Eroare', 'Te rugăm să completezi toate câmpurile.');
@@ -42,9 +40,9 @@ export default function LoginScreen({ navigation }) {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('Explore'); // Navigare la pagina ExploreScreen
+      navigation.navigate('Explore'); 
     } catch (error) {
-      Alert.alert('Eroare', error.message); // Afișează eroarea
+      Alert.alert('Eroare', error.message); 
     }
   };
 
@@ -148,12 +146,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 40,
-    marginTop: -60, // Mută textul mai sus
+    marginTop: -60, 
     color: '#333',
   },
   inputGroup: {
     marginBottom: 15,
-    width: '85%', // Lățime ajustată
+    width: '85%', 
   },
   inputLabel: {
     fontSize: 14,
@@ -175,7 +173,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 30,
-    width: '85%', // Lățime ajustată
+    width: '85%', 
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -212,7 +210,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 30,
-    width: '85%', // Lățime ajustată
+    width: '85%', 
   },
   loginButtonText: {
     color: '#fff',
@@ -223,7 +221,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    width: '85%', // Lățime ajustată
+    width: '85%',
   },
   line: {
     flex: 1,
@@ -241,14 +239,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 10,
-    width: '85%', // Lățime ajustată
+    width: '85%', 
   },
   googleButton: {
     backgroundColor: '#DB4437',
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: 'center',
-    width: '85%', // Lățime ajustată
+    width: '85%', 
   },
   socialButtonText: {
     color: '#fff',
@@ -257,7 +255,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: 'center',
-    marginBottom: 30, // Mută textul mai sus
+    marginBottom: 30, 
     marginTop: 20,
   },
   registerLink: {
